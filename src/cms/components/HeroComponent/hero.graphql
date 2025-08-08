@@ -13,4 +13,5 @@ fragment Hero on Hero {
     Links {
         ...LinkCollection
     }
+    class
 }

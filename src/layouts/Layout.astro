@@ -59,7 +59,8 @@ const siteStyles = await getOptimizelySdk(contentPayload).siteStylesByHostname({
 
 const siteFont = getSiteFont(siteStyles?.SiteStyles?.item);
 
-const externalStylesUrl = siteStyles?.SiteStyles?.item?.cssFile?._metadata?.url?.default || null;
+const cssCacheBuster = Date.now();
+const externalStylesUrl = siteStyles?.SiteStyles?.item?.cssFile?._metadata?.url?.default + `?d=${cssCacheBuster}` || null;
 
 const canonicalUrl = Astro.url.origin + hierarchicalUrl;
 
@@ -92,6 +93,7 @@ const graphType = graphtype !== '-' ? graphtype : 'website';
         {hierarchicalUrl && <link rel="canonical" href={canonicalUrl} />}
         <title>{title}</title>
         <ClientRouter />
+        
     </head>
     <body>
         {
@@ -103,6 +105,19 @@ const graphType = graphtype !== '-' ? graphtype : 'website';
                 />
             )
         }
+        <div class="top-banner">
+            <div>
+                <p>Refresh your space or tackle a new project with inspiration from Lowe’s. Learn More</p>
+                <ul class="top-nav">
+                    <li>Lowe's Credit Center</li>
+                    <li>Order Status</li>
+                    <li>Weekly Ad</li>
+                    <li>Lowe's PRO</li>
+                    <li>DIY & Ideas</li>
+                </ul>
+            </div>
+        </div>
+
         <Header siteSettings={siteSettings} />
         <slot />
         <Footer siteSettings={siteSettings} />
