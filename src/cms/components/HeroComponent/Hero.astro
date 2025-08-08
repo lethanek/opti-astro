@@ -31,8 +31,8 @@ const globalStyles = getGlobalStyles(displaySettings);
 
 <section
     class="relative flex w-full items-center"
-    class:list={[justifyClass, heightClass, globalStyles]}
-    
+    class:list={[justifyClass, heightClass, globalStyles, data?.class]}
+   
 >
     {
         hasVideo && videoUrl && (
