@@ -102,38 +102,11 @@ const pageClass = 'page-article';
                     </div>
                 </div>
             </div>
-
-<div class="sharethis-inline-reaction-buttons"></div>
-
-
             <article
                 class="prose dark:prose-invert md:prose-lg lg:prose-xl mx-auto mt-12 mb-12 max-w-screen-xl px-4 2xl:px-0 prose-img:rounded-[2rem] prose-img:p-4 "
                 data-epi-edit={isCmsEdit ? "BlogPostBody" : undefined}
                 set:html={post.Body?.html}
             />
-
-<div id="disqus_thread"></div>
-<script>
-    /**
-    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
-    
-    var disqus_config = function () {
-    this.page.url = "https://optirocks-pentair.netlify.app/latest/blogs/pfas-in-water-understanding-the-new-epa-drinking-water-rule/";  // Replace PAGE_URL with your page's canonical URL variable
-    this.page.identifier = "12345"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-    };
-    
-    (function() { // DON'T EDIT BELOW THIS LINE
-    var d = document, s = d.createElement('script');
-    s.src = 'https://optirocks-pentair-com.disqus.com/embed.js';
-    s.setAttribute('data-timestamp', +new Date());
-    (d.head || d.body).appendChild(s);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-
-<script id="dsq-count-scr" src="//optirocks-pentair-com.disqus.com/count.js" async></script>
-
         </main>
     </div>
 </Layout>
