@@ -86,6 +86,10 @@ const isRtl = rtlLangs.includes(currentLang.split('-')[0]);
 <!doctype html>
 <html data-theme="light" lang={currentLang} {...(isRtl ? { dir: "rtl" } : {})}>
     <head>
+
+<script type='text/javascript' src='https://platform-api.sharethis.com/js/sharethis.js#property=69252efefc73e807a57ed722&product=inline-reaction-buttons' async='async'></script>
+
+
         <meta charset="UTF-8" />
         {!isCmsEdit && optiWebProjectId && (
             <link rel="preload" href={`//cdn.optimizely.com/js/${optiWebProjectId}.js`} as="script" />
