@@ -25,15 +25,11 @@ const imageUrl =
 const componentClass = 'component-image';
 ---
 
-<h1>Image!</h1>
-<p> - {data.ExternalUrl} - </p>
-
 {imageUrl && 
-    <AstroImage
+    <img
         data-epi-block-id={isCmsEdit && key || undefined}
         class:list={[...getImageElementStyles(displaySettings), componentClass]}
         src={imageUrl || ''}
         alt={data.AltText || ''}
-        inferSize={true}
     />
 }
