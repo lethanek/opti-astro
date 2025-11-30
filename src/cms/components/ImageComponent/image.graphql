@@ -1,5 +1,6 @@
 fragment Image on Image {
     AltText
+    ExternalUrl
     Image {
         ...ContentUrl
     }
