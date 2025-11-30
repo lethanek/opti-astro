@@ -4,4 +4,5 @@ fragment Image on Image {
         ...ContentUrl
         ...ContentReferenceItem
     }
+    ExternalUrl
 }
