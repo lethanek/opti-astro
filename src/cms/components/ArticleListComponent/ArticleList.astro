@@ -32,7 +32,11 @@ const articlesList = await getOptimizelySdk(contentPayload).getArticles({
     rootUrl: data.ArticleRoot?.url?.default || '/',
 });
 const glideId = randomBytes(5).toString('hex');
-const items = articlesList.ArticlePage?.items || null;
+const rawItems = articlesList.ArticlePage?.items || [];
+const locationFilter = Astro.url.searchParams.get('location') || Astro.cookies.get('location')?.value || data.location || null;
+const items = locationFilter
+    ? rawItems.filter(item => item.SeoSettings?.location?.includes(locationFilter))
+    : rawItems;
 
 // Get style settings from display settings
 const styleDictionary = getDictionaryFromDisplaySettings(displaySettings);
@@ -133,6 +137,7 @@ const figureClasses = {
 };
 
 const componentClass = 'component-articlelist';
+
 ---
 
 <div data-epi-block-id={isCmsEdit && key || undefined} class={componentClass}>
@@ -155,6 +160,8 @@ const componentClass = 'component-articlelist';
                                 />
                             </figure>
                             <div class="card-body">
+                                <span>{item.SeoSettings?.location}</span>
+                                
                                 <h2 class="card-title">{item.Heading}</h2>
                                 { item.Body?.html &&
                                     <div set:html={item.Body.html.replace(/<[^>]*>/g, '').split(' ').slice(0, 30).join(' ') + "..."} />

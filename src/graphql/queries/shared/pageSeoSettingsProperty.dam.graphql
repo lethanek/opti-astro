@@ -7,4 +7,6 @@ fragment PageSeoSettingsProperty on PageSeoSettingsProperty {
     }
     GraphType
     Indexing
+    location
+    department
 }

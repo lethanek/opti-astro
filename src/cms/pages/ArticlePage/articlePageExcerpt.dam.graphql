@@ -12,4 +12,7 @@ fragment ArticlePageExcerpt on ArticlePage {
     Body {
         html
     }
+    SeoSettings {
+        ...PageSeoSettingsProperty
+    }
 }
