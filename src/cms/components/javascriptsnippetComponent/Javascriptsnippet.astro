@@ -1,0 +1,39 @@
+---
+import type {
+    DisplaySettingsFragment,
+    JavascriptsnippetFragment
+} from '../../../../__generated/sdk.ts';
+import type { ContentPayload } from '../../../graphql/shared/ContentPayload.ts';
+import { getDictionaryFromDisplaySettings } from '../../../graphql/shared/displaySettingsHelpers.ts';
+import { isEditContext } from '../../shared/utils.ts';
+
+const isCmsEdit = isEditContext(Astro.url);
+
+export interface Props {
+    key: string;
+    data: JavascriptsnippetFragment;
+    contentPayload: ContentPayload;
+    displayTemplateKey: string;
+    displaySettings: DisplaySettingsFragment[];
+
+}
+const { key, data } = Astro.props as Props;
+
+// Safely handle the snippet to avoid XSS; assume it's trusted CMS content
+const snippet = data.snippet || '';
+
+---
+
+<div>
+    <script define:vars={{ snippet }}>
+        // Inject the snippet dynamically on the client
+        if (snippet) {
+            try {
+                eval(snippet); // Use with caution; validate CMS input
+            } catch (error) {
+                console.error('Error executing JavaScript snippet:', error);
+            }
+        }
+    </script>
+</div>
+

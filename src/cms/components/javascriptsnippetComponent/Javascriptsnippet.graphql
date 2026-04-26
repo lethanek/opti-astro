@@ -1,0 +1,3 @@
+fragment Javascriptsnippet on Javascriptsnippet {
+    snippet
+}
