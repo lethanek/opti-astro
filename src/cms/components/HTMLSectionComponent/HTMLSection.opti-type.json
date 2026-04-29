@@ -1,0 +1,27 @@
+{
+	"key": "HTMLSection",
+	"displayName": "HTML Section",
+	"description": "adds html to site.",
+	"baseType": "component",
+	"sortOrder": 0,
+	"mayContainTypes": [],
+	"mediaFileExtensions": [],
+	"compositionBehaviors": [
+		"sectionEnabled",
+		"elementEnabled"
+	],
+	"properties": {
+		"html": {
+			"type": "string",
+			"displayName": "HTML",
+			"format": "html",
+			"description": "",
+			"localized": false,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 0,
+			"indexingType": "searchable",
+			"editorSettings": {}
+		}
+	}
+}
