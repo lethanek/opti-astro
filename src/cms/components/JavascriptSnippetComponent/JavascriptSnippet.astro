@@ -1,7 +1,7 @@
 ---
 import type {
     DisplaySettingsFragment,
-    JavascriptsnippetFragment
+    JavascriptSnippetFragment
 } from '../../../../__generated/sdk.ts';
 import type { ContentPayload } from '../../../graphql/shared/ContentPayload.ts';
 import { getDictionaryFromDisplaySettings } from '../../../graphql/shared/displaySettingsHelpers.ts';
@@ -11,7 +11,7 @@ const isCmsEdit = isEditContext(Astro.url);
 
 export interface Props {
     key: string;
-    data: JavascriptsnippetFragment;
+    data: JavascriptSnippetFragment;
     contentPayload: ContentPayload;
     displayTemplateKey: string;
     displaySettings: DisplaySettingsFragment[];
