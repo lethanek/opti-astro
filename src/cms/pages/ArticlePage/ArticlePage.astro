@@ -22,6 +22,16 @@ const optiResponse = await getOptimizelySdk(contentPayload).pageById({
     ver: contentPayload.ver,
 });
 const post = optiResponse?._Page?.item as ArticlePageFragment;
+
+const locationValue = post?.SeoSettings?.location;
+if (locationValue) {
+    Astro.cookies.set('location', String(locationValue), {
+        path: '/',
+        httpOnly: false,
+        sameSite: 'lax',
+    });
+}
+
 const publishedDate = format(
     new Date(post?._metadata?.published ?? Date.now()),
     'dd MMM yyyy'
@@ -41,6 +51,8 @@ const hierarchicalUrl = post?._metadata?.url?.type === "SIMPLE" ? post?._metadat
 const extPreviewEnabled = post?.PageAdminSettings?.EnableExternalPreview ?? false;
 
 const pageClass = 'page-article';
+
+
 ---
 
 <Layout
@@ -98,10 +110,12 @@ const pageClass = 'page-article';
                             >
                                 {publishedDate}
                             </p>
+                            <p>Location: {post?.SeoSettings?.location}</p>
                         </div>
                     </div>
                 </div>
             </div>
+            
             <article
                 class="prose dark:prose-invert md:prose-lg lg:prose-xl mx-auto mt-12 mb-12 max-w-screen-xl px-4 2xl:px-0 prose-img:rounded-[2rem] prose-img:p-4 "
                 data-epi-edit={isCmsEdit ? "Body" : undefined}

@@ -33,7 +33,9 @@ const articlesList = await getOptimizelySdk(contentPayload).getArticles({
 });
 const glideId = randomBytes(5).toString('hex');
 const rawItems = articlesList.ArticlePage?.items || [];
-const locationFilter = (Astro.url.searchParams.get('location') || Astro.cookies.get('location')?.value || data.location || null)?.toLowerCase() || null;
+const locationCookieValue = Astro.cookies.get('location')?.value || null;
+const locationFilter = (Astro.url.searchParams.get('location') || locationCookieValue || data.location || null)?.toLowerCase() || null;
+const showClearLocationButton = !!locationCookieValue && !!locationFilter;
 const items = locationFilter
     ? rawItems.filter(item => item.SeoSettings?.location?.some(loc => loc?.toLowerCase() === locationFilter))
     : rawItems;
@@ -143,6 +145,17 @@ const componentClass = 'component-articlelist';
 <div data-epi-block-id={isCmsEdit && key || undefined} class={componentClass}>
     <div class="w-full" class:list={[containerWrapperClasses]}>
         <h1 class="w-full basis-full" class:list={[titleClasses]}>{data?.Title}</h1>
+        {showClearLocationButton && (
+            <div class:list={["w-full mt-2", buttonClasses, { 'flex': true }]}>
+                <button
+                    type="button"
+                    class="btn btn-ghost btn-sm text-base-content/70 hover:text-base-content"
+                    data-clear-location-filter
+                >
+                    Show All
+                </button>
+            </div>
+        )}
         <div class="mt-4 mb-4" class:list={[gridContainerClasses]}>
             {
                 //@ts-ignore
@@ -177,3 +190,14 @@ const componentClass = 'component-articlelist';
         </div>
     </div>
 </div>
+
+<script>
+    document.querySelectorAll('[data-clear-location-filter]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            document.cookie = 'location=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            const url = new URL(window.location.href);
+            url.searchParams.delete('location');
+            window.location.href = url.toString();
+        });
+    });
+</script>
