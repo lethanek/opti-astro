@@ -33,11 +33,11 @@ const articlesList = await getOptimizelySdk(contentPayload).getArticles({
 });
 const glideId = randomBytes(5).toString('hex');
 const rawItems = articlesList.ArticlePage?.items || [];
-const locationFilter = Astro.url.searchParams.get('location') || Astro.cookies.get('location')?.value || data.location || null;
+const locationFilter = (Astro.url.searchParams.get('location') || Astro.cookies.get('location')?.value || data.location || null)?.toLowerCase() || null;
 const items = locationFilter
-    ? rawItems.filter(item => item.SeoSettings?.location?.includes(locationFilter))
+    ? rawItems.filter(item => item.SeoSettings?.location?.some(loc => loc?.toLowerCase() === locationFilter))
     : rawItems;
-
+console.log(locationFilter)
 // Get style settings from display settings
 const styleDictionary = getDictionaryFromDisplaySettings(displaySettings);
 
