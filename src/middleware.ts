@@ -19,6 +19,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
     });
   }
 
+  const departmentParam = context.url.searchParams.get('department');
+  if (departmentParam && /^[a-z0-9-]{1,64}$/i.test(departmentParam)) {
+    context.cookies.set('department', departmentParam, {
+      path: '/',
+      sameSite: 'lax',
+    });
+  }
+
+
   // Check if this is an admin route
   if (context.url.pathname.startsWith('/opti-admin')) {
     const authError = checkAdminAuth(context.request);

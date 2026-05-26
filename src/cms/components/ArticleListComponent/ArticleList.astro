@@ -33,13 +33,22 @@ const articlesList = await getOptimizelySdk(contentPayload).getArticles({
 });
 const glideId = randomBytes(5).toString('hex');
 const rawItems = articlesList.ArticlePage?.items || [];
+
+//filter news stories based on visitor
 const locationCookieValue = Astro.cookies.get('location')?.value || null;
+const departmentCookieValue = Astro.cookies.get('department')?.value || null;
 const locationFilter = (Astro.url.searchParams.get('location') || locationCookieValue || data.location || null)?.toLowerCase() || null;
-const showClearLocationButton = !!locationCookieValue && !!locationFilter;
-const items = locationFilter
-    ? rawItems.filter(item => item.SeoSettings?.location?.some(loc => loc?.toLowerCase() === locationFilter))
+const departmentFilter = (Astro.url.searchParams.get('department') || departmentCookieValue || data.Department || null)?.toLowerCase() || null;
+
+const showClearLocationButton = !!locationCookieValue && !!locationFilter || !!departmentCookieValue && !!departmentFilter;
+const items = (locationFilter || departmentFilter)
+    ? rawItems.filter(item => {
+        const matchesLocation = locationFilter && item.SeoSettings?.location?.some(loc => loc?.toLowerCase() === locationFilter);
+        const matchesDepartment = departmentFilter && item.SeoSettings?.department?.some(dept => dept?.toLowerCase() === departmentFilter);
+        return matchesLocation || matchesDepartment;
+    })
     : rawItems;
-console.log(locationFilter)
+
 // Get style settings from display settings
 const styleDictionary = getDictionaryFromDisplaySettings(displaySettings);
 
@@ -173,7 +182,7 @@ const componentClass = 'component-articlelist';
                                 />
                             </figure>
                             <div class="card-body">
-                                <span>{item.SeoSettings?.location}</span>
+                                <span>{item.SeoSettings?.location} \\ {item.SeoSettings?.department}</span>
                                 
                                 <h2 class="card-title">{item.Heading}</h2>
                                 { item.Body?.html &&
@@ -195,8 +204,11 @@ const componentClass = 'component-articlelist';
     document.querySelectorAll('[data-clear-location-filter]').forEach((btn) => {
         btn.addEventListener('click', () => {
             document.cookie = 'location=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            document.cookie = 'department=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
             const url = new URL(window.location.href);
             url.searchParams.delete('location');
+            url.searchParams.delete('department');
             window.location.href = url.toString();
         });
     });
