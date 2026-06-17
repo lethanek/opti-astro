@@ -8,4 +8,6 @@ fragment ArticleList on ArticleList {
         }
     }
     IncludeAllSites
+    location
+    Department
 }

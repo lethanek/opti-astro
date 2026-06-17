@@ -1,0 +1,32 @@
+{
+	"key": "HeroCarousel",
+	"displayName": "Hero Carousel",
+	"description": "Carousel that rotates a list of Hero shared blocks.",
+	"baseType": "component",
+	"sortOrder": 0,
+	"mayContainTypes": [],
+	"mediaFileExtensions": [],
+	"compositionBehaviors": [
+		"sectionEnabled",
+		"elementEnabled"
+	],
+	"properties": {
+		"Heros": {
+			"type": "array",
+			"displayName": "Heros",
+			"description": "Hero shared blocks to display as slides in the carousel.",
+			"localized": false,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 10,
+			"editorSettings": {},
+			"items": {
+				"type": "contentReference",
+				"allowedTypes": [
+					"Hero"
+				],
+				"restrictedTypes": []
+			}
+		}
+	}
+}

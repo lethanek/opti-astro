@@ -1,0 +1,26 @@
+{
+	"key": "JavascriptSnippet",
+	"displayName": "javascript snippet",
+	"description": "adds javascript snippet to the page",
+	"baseType": "component",
+	"sortOrder": 0,
+	"mayContainTypes": [],
+	"mediaFileExtensions": [],
+	"compositionBehaviors": [
+		"sectionEnabled",
+		"elementEnabled"
+	],
+	"properties": {
+		"snippet": {
+			"type": "string",
+			"displayName": "Snippet",
+			"description": "",
+			"localized": false,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 5,
+			"indexingType": "searchable",
+			"editorSettings": {}
+		}
+	}
+}

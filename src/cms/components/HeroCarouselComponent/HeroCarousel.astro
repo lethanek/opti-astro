@@ -1,0 +1,172 @@
+---
+import type {
+    DisplaySettingsFragment,
+    HeroCarouselFragment,
+    HeroFragment,
+} from '../../../../__generated/sdk';
+import type { ContentPayload } from '../../../graphql/shared/ContentPayload';
+import { isEditContext } from '../../shared/utils.ts';
+import Hero from '../HeroComponent/Hero.astro';
+import { getHeroCarouselStyleConfig } from './HeroCarouselStyling';
+
+const isCmsEdit = isEditContext(Astro.url);
+
+export interface Props {
+    key: string;
+    data: HeroCarouselFragment;
+    displaySettings: DisplaySettingsFragment[];
+    displayTemplateKey: string;
+    contentPayload: ContentPayload;
+}
+
+const { key, data, displaySettings, contentPayload } = Astro.props as Props;
+
+const styleConfig = getHeroCarouselStyleConfig(displaySettings);
+
+const heroSlides = (data.Heros || []).filter(
+    (hero): hero is NonNullable<typeof hero> =>
+        hero !== null && (hero as any)?.Heading !== undefined
+);
+
+const carouselId = `hero-carousel-${Math.random().toString(36).substring(2, 9)}`;
+const componentClass = 'component-hero-carousel';
+---
+
+<section
+    id={carouselId}
+    class:list={[
+        'splide standard-carousel',
+        styleConfig.carouselHeight,
+        'w-full',
+        componentClass,
+    ]}
+    aria-label="Hero Carousel"
+    data-show-arrows={styleConfig.showNavigation.toString()}
+    data-show-pagination={styleConfig.showPagination.toString()}
+    data-autoplay={styleConfig.enableAutoplay.toString()}
+    data-autoplay-delay={styleConfig.autoplayDelay.toString()}
+    data-loop={styleConfig.enableLoop.toString()}
+    data-transition-speed={styleConfig.transitionSpeed.toString()}
+    data-epi-block-id={isCmsEdit && key || undefined}
+>
+    <div class="splide__track">
+        <ul class="splide__list">
+            {
+                heroSlides.map((hero) => {
+                    const heroData = hero as HeroFragment;
+                    const heroKey = (hero as any)?._metadata?.key ?? '';
+                    return (
+                        <li class:list={['splide__slide', styleConfig.carouselHeight]}>
+                            <Hero
+                                key={heroKey}
+                                data={heroData}
+                                displaySettings={[]}
+                                contentPayload={contentPayload}
+                            />
+                        </li>
+                    );
+                })
+            }
+        </ul>
+    </div>
+</section>
+
+<style>
+    .component-hero-carousel .splide__track,
+    .component-hero-carousel .splide__list {
+        height: 100%;
+    }
+
+    .component-hero-carousel .splide__slide {
+        display: flex;
+        align-items: stretch;
+        justify-content: stretch;
+    }
+
+    .component-hero-carousel .splide__slide > :global(section) {
+        width: 100%;
+        height: 100%;
+    }
+
+    .component-hero-carousel .splide__arrow {
+        background: rgba(0, 0, 0, 0.7) !important;
+        border: none !important;
+        border-radius: 50% !important;
+        width: 3rem !important;
+        height: 3rem !important;
+        z-index: 10;
+    }
+
+    .component-hero-carousel .splide__arrow svg {
+        fill: white !important;
+        width: 1.5rem !important;
+        height: 1.5rem !important;
+    }
+
+    .component-hero-carousel .splide__pagination {
+        bottom: 1rem !important;
+        z-index: 10;
+    }
+
+    .component-hero-carousel .splide__pagination__page {
+        background: rgba(255, 255, 255, 0.5) !important;
+        border: none !important;
+        border-radius: 50% !important;
+        width: 0.75rem !important;
+        height: 0.75rem !important;
+        margin: 0 0.25rem !important;
+    }
+
+    .component-hero-carousel .splide__pagination__page.is-active {
+        background: white !important;
+        transform: scale(1.3);
+    }
+</style>
+
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+
+<script>
+    document.addEventListener('astro:page-load', function () {
+        const carousels = document.querySelectorAll('.component-hero-carousel');
+
+        carousels.forEach((carousel) => {
+            if ((carousel as any).splide) return;
+
+            const showArrows = carousel.getAttribute('data-show-arrows') === 'true';
+            const showPagination = carousel.getAttribute('data-show-pagination') === 'true';
+            const enableAutoplay = carousel.getAttribute('data-autoplay') === 'true';
+            const autoplayDelay = parseInt(carousel.getAttribute('data-autoplay-delay') || '5000');
+            const enableLoop = carousel.getAttribute('data-loop') !== 'false';
+            const transitionSpeed = parseInt(
+                carousel.getAttribute('data-transition-speed') || '500'
+            );
+
+            const config: any = {
+                type: enableLoop ? 'loop' : 'slide',
+                arrows: showArrows,
+                pagination: showPagination,
+                autoplay: enableAutoplay,
+                interval: autoplayDelay,
+                pauseOnHover: true,
+                pauseOnFocus: true,
+                speed: transitionSpeed,
+                easing: 'ease-in-out',
+                updateOnMove: true,
+                perPage: 1,
+                gap: 0,
+                height: 'auto',
+                heightRatio: 0,
+            };
+
+            if (typeof (window as any).Splide !== 'undefined') {
+                new (window as any).Splide(carousel, config).mount();
+            } else {
+                console.error('Splide is not loaded');
+            }
+        });
+    });
+</script>

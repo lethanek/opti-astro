@@ -1,0 +1,149 @@
+{
+	"key": "DefaultHeroCarousel",
+	"displayName": "Hero Carousel Default",
+	"contentType": "HeroCarousel",
+	"isDefault": true,
+	"settings": {
+		"carouselHeight": {
+			"displayName": "Carousel Height",
+			"editor": "select",
+			"sortOrder": 10,
+			"choices": {
+				"h_auto": {
+					"displayName": "Auto (Content Height)",
+					"sortOrder": 10
+				},
+				"h_64": {
+					"displayName": "Small (16rem)",
+					"sortOrder": 20
+				},
+				"h_80": {
+					"displayName": "Medium (20rem)",
+					"sortOrder": 30
+				},
+				"h_96": {
+					"displayName": "Large (24rem)",
+					"sortOrder": 40
+				},
+				"h_112": {
+					"displayName": "X-Large (28rem)",
+					"sortOrder": 50
+				},
+				"h_128": {
+					"displayName": "XX-Large (32rem)",
+					"sortOrder": 60
+				},
+				"h_screen": {
+					"displayName": "Full Screen",
+					"sortOrder": 70
+				}
+			}
+		},
+		"showNavigation": {
+			"displayName": "Show Navigation Arrows",
+			"editor": "select",
+			"sortOrder": 20,
+			"choices": {
+				"true": {
+					"displayName": "Yes",
+					"sortOrder": 10
+				},
+				"false": {
+					"displayName": "No",
+					"sortOrder": 20
+				}
+			}
+		},
+		"showPagination": {
+			"displayName": "Show Pagination Dots",
+			"editor": "select",
+			"sortOrder": 30,
+			"choices": {
+				"true": {
+					"displayName": "Yes",
+					"sortOrder": 10
+				},
+				"false": {
+					"displayName": "No",
+					"sortOrder": 20
+				}
+			}
+		},
+		"autoplay": {
+			"displayName": "Enable Autoplay",
+			"editor": "select",
+			"sortOrder": 40,
+			"choices": {
+				"true": {
+					"displayName": "Yes",
+					"sortOrder": 10
+				},
+				"false": {
+					"displayName": "No",
+					"sortOrder": 20
+				}
+			}
+		},
+		"autoplayDelay": {
+			"displayName": "Autoplay Delay",
+			"editor": "select",
+			"sortOrder": 50,
+			"choices": {
+				"delay3s": {
+					"displayName": "3 seconds",
+					"sortOrder": 10
+				},
+				"delay5s": {
+					"displayName": "5 seconds (Default)",
+					"sortOrder": 20
+				},
+				"delay7s": {
+					"displayName": "7 seconds",
+					"sortOrder": 30
+				},
+				"delay10s": {
+					"displayName": "10 seconds",
+					"sortOrder": 40
+				}
+			}
+		},
+		"loop": {
+			"displayName": "Enable Loop",
+			"editor": "select",
+			"sortOrder": 60,
+			"choices": {
+				"true": {
+					"displayName": "Yes",
+					"sortOrder": 10
+				},
+				"false": {
+					"displayName": "No",
+					"sortOrder": 20
+				}
+			}
+		},
+		"transitionSpeed": {
+			"displayName": "Transition Speed",
+			"editor": "select",
+			"sortOrder": 70,
+			"choices": {
+				"speed300": {
+					"displayName": "Fast (300ms)",
+					"sortOrder": 10
+				},
+				"speed500": {
+					"displayName": "Normal (500ms)",
+					"sortOrder": 20
+				},
+				"speed800": {
+					"displayName": "Slow (800ms)",
+					"sortOrder": 30
+				},
+				"speed1000": {
+					"displayName": "Very Slow (1000ms)",
+					"sortOrder": 40
+				}
+			}
+		}
+	}
+}

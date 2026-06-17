@@ -11,6 +11,23 @@ const placeholderCache = new Map<string, Map<string, string>>();
 const CACHE_DURATION = 60000; // 1 minute
 
 export const onRequest = defineMiddleware(async (context, next) => {
+  const locationParam = context.url.searchParams.get('location');
+  if (locationParam && /^[a-z0-9-]{1,64}$/i.test(locationParam)) {
+    context.cookies.set('location', locationParam, {
+      path: '/',
+      sameSite: 'lax',
+    });
+  }
+
+  const departmentParam = context.url.searchParams.get('department');
+  if (departmentParam && /^[a-z0-9-]{1,64}$/i.test(departmentParam)) {
+    context.cookies.set('department', departmentParam, {
+      path: '/',
+      sameSite: 'lax',
+    });
+  }
+
+
   // Check if this is an admin route
   if (context.url.pathname.startsWith('/opti-admin')) {
     const authError = checkAdminAuth(context.request);

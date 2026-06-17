@@ -11,7 +11,7 @@ fragment AllComponentsExceptGrid on _IComponent {
     ...Paragraph
     ...Card
     ...Hero
-    ...Carousel
+    ...HeroCarousel
     ...Collapse
     ...ArticleList
     ...Button
@@ -21,4 +21,5 @@ fragment AllComponentsExceptGrid on _IComponent {
     ...OdpForm
     ...FacetedSearch
     ...DamAssetList
+    ...JavascriptSnippet
 }

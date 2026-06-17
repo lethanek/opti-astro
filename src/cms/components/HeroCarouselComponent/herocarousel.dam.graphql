@@ -1,0 +1,12 @@
+fragment HeroCarousel on HeroCarousel {
+    Heros {
+        _metadata {
+            key
+            types
+            displayName
+        }
+        ... on Hero {
+            ...Hero
+        }
+    }
+}
