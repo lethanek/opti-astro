@@ -1,0 +1,9 @@
+fragment ContainerWidget on ContainerWidget {
+    CssClass
+    ContentArea {
+        _metadata {
+            types
+        }
+        ...AllComponentsExceptGrid
+    }
+}

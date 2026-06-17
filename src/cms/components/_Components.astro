@@ -21,6 +21,7 @@ import Video from './VideoComponent/Video.astro';
 import VideoExternal from './VideoExternalComponent/VideoExternal.astro';
 import OptiForm from '../forms/base/OptiFormsContainerDataComponent/OptiForm.astro';
 import Javascriptsnippet from './JavascriptSnippetComponent/JavascriptSnippet.astro';
+import ContainerWidget from './ContainerWidgetComponent/ContainerWidget.astro';
 
 
 interface Props {
@@ -244,6 +245,17 @@ const componentType = component._metadata.types[0];
 {
     componentType === 'JavascriptSnippet' && (
         <JavascriptSnippet
+            key={data?.key}
+            contentPayload={contentPayload}
+            data={component}
+            displaySettings={displaySettings}
+            displayTemplateKey={displayTemplateKey}
+        />
+    )
+}
+{
+    componentType === 'ContainerWidget' && (
+        <ContainerWidget
             key={data?.key}
             contentPayload={contentPayload}
             data={component}

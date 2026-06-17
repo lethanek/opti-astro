@@ -1,0 +1,23 @@
+fragment FigmaPage on FigmaPage {
+    _metadata {
+        ...PageUrl
+        published
+        displayName
+    }
+    Background {
+        ...ContentUrl
+        ...ContentReferenceItem
+    }
+    EyebrowText
+    Heading
+    Subheading
+    Body {
+        html
+    }
+    ContentArea {
+        _metadata {
+            types
+        }
+        ...ContentArea
+    }
+}

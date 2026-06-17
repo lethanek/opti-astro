@@ -122,6 +122,28 @@ async function ensurePropertyGroups(contentType, existingGroups) {
     }
 }
 
+/**
+ * Upsert a content type: try PATCH first, fall back to CREATE if it does not exist yet.
+ * Mirrors the previous PUT behavior available in @remkoj/optimizely-cms-api < 5.3.
+ * @param {string} key
+ * @param {object} body
+ */
+async function upsertContentType(key, body) {
+    try {
+        await client.contentTypes.contentTypesPatch(
+            key,
+            body,
+            true // cmsIgnoreDataLossWarnings — was "force" on the old PUT
+        );
+    } catch (e) {
+        if (e?.status === 404) {
+            await client.contentTypes.contentTypesCreate(body);
+            return;
+        }
+        throw e;
+    }
+}
+
 // Get command line argument for specific type
 const typeNameArg = process.argv[2];
 
@@ -170,17 +192,15 @@ const typeNameArg = process.argv[2];
         if (cleanContentType.created) delete cleanContentType.created;
 
         try {
-            await client.contentTypes.contentTypesPut(
-                contentTypeKey,
-                cleanContentType,
-                true // Force update
-            );
+            await upsertContentType(contentTypeKey, cleanContentType);
             console.log(
                 `✅ Content type "${displayName}" (${contentTypeKey}) of baseType ${baseType} has been updated`
             );
         } catch (e) {
             console.log(`❌ Error while trying to update ${contentTypeKey} from ${targetFile}`);
             console.log(`Error Details: ${e.message}`);
+            if (e?.status) console.log(`Status: ${e.status} ${e.statusText ?? ''}`);
+            if (e?.body) console.log(`Response: ${JSON.stringify(e.body, null, 2)}`);
             process.exit(1);
         }
     } else {
@@ -230,11 +250,7 @@ const typeNameArg = process.argv[2];
 
             try {
                 // Push the content type to Optimizely CMS
-                await client.contentTypes.contentTypesPut(
-                    contentTypeKey,
-                    cleanContentType,
-                    true // Force update
-                );
+                await upsertContentType(contentTypeKey, cleanContentType);
                 console.log(
                     `✅ Content type "${displayName}" (${contentTypeKey}) of baseType ${baseType} has been updated`
                 );

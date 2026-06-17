@@ -39,6 +39,24 @@ async function processFiles(pattern) {
     }
 }
 
+/**
+ * Upsert a display template: try PATCH first, fall back to CREATE if it does not exist yet.
+ * Mirrors the previous PUT behavior available in @remkoj/optimizely-cms-api < 5.3.
+ * @param {string} key
+ * @param {object} body
+ */
+async function upsertDisplayTemplate(key, body) {
+    try {
+        await client.displayTemplates.displayTemplatesPatch(key, body);
+    } catch (e) {
+        if (e?.status === 404) {
+            await client.displayTemplates.displayTemplatesCreate(body);
+            return;
+        }
+        throw e;
+    }
+}
+
 // Get command line argument for specific style
 const styleNameArg = process.argv[2];
 
@@ -71,10 +89,7 @@ const styleNameArg = process.argv[2];
         const nodeType = styleDefinition.nodeType;
 
         try {
-            await client.displayTemplates.displayTemplatesPut(
-                styleKey,
-                styleDefinition
-            );
+            await upsertDisplayTemplate(styleKey, styleDefinition);
             console.log(
                 `✅ Template with styleKey: ${styleKey}, contentType: ${contentType}, nodeType: ${nodeType} has been updated`
             );
@@ -111,10 +126,7 @@ const styleNameArg = process.argv[2];
             const nodeType = styleDefinition.nodeType;
             
             try {
-                await client.displayTemplates.displayTemplatesPut(
-                    styleKey,
-                    styleDefinition
-                );
+                await upsertDisplayTemplate(styleKey, styleDefinition);
                 console.log(
                     `✅ Template with styleKey: ${styleKey}, contentType: ${contentType}, nodeType: ${nodeType} has been updated`
                 );

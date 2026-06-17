@@ -1,6 +1,7 @@
 fragment AllComponents on _IComponent {
     ...AllComponentsExceptGrid
     ...Grid # Grid needs to be separated from the rest of the components because of ContentArea and recursive rendering
+    ...ContainerWidget # ContainerWidget also has a ContentArea, so it must be kept out of AllComponentsExceptGrid
 }
 
 fragment AllComponentsExceptGrid on _IComponent {

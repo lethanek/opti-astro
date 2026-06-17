@@ -1,0 +1,56 @@
+---
+import type {
+    ContainerWidgetFragment,
+    DisplaySettingsFragment,
+} from '../../../../__generated/sdk';
+import type { ContentPayload } from '../../../graphql/shared/ContentPayload';
+import { getDictionaryFromDisplaySettings } from '../../../graphql/shared/displaySettingsHelpers.ts';
+import ContentArea from '../../shared/ContentArea/ContentArea.astro';
+import { isEditContext } from '../../shared/utils.ts';
+
+const isCmsEdit = isEditContext(Astro.url);
+
+export interface Props {
+    key: string;
+    data: ContainerWidgetFragment;
+    displaySettings: DisplaySettingsFragment[];
+    displayTemplateKey: string;
+    contentPayload: ContentPayload;
+}
+
+const { key, data, displaySettings, contentPayload } = Astro.props as Props;
+
+const settings = getDictionaryFromDisplaySettings(displaySettings);
+
+const layoutClasses =
+    settings['layout'] === 'row'
+        ? 'flex flex-row flex-wrap'
+        : 'flex flex-col';
+
+const gapMap: Record<string, string> = {
+    gap_0: 'gap-0',
+    gap_2: 'gap-2',
+    gap_4: 'gap-4',
+    gap_6: 'gap-6',
+    gap_8: 'gap-8',
+};
+const gapClass = gapMap[settings['gap']] ?? 'gap-4';
+
+const customCssClass = (data.CssClass ?? '').trim();
+const componentClass = 'component-container-widget';
+---
+
+<div
+    class:list={[componentClass, layoutClasses, gapClass, customCssClass]}
+    data-epi-block-id={isCmsEdit && key || undefined}
+>
+<h1>Hello!</h1>
+    {
+        (data.ContentArea ?? []).map((contentAreaItem: any) => (
+            <ContentArea
+                contentPayload={contentPayload}
+                contentAreaItem={contentAreaItem}
+            />
+        ))
+    }
+</div>

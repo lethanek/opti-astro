@@ -1,0 +1,40 @@
+{
+	"key": "ContainerWidget",
+	"displayName": "Container Widget",
+	"description": "Wraps one or more shared blocks in a container with a custom CSS class for styling.",
+	"baseType": "_component",
+	"sortOrder": 0,
+	"mayContainTypes": [],
+	"mediaFileExtensions": [],
+	"compositionBehaviors": [
+		"sectionEnabled"
+	],
+	"properties": {
+		"ContentArea": {
+			"type": "array",
+			"displayName": "Content Area",
+			"description": "Shared blocks to render inside the container.",
+			"localized": true,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 10,
+			"editorSettings": {},
+			"items": {
+				"type": "content",
+				"allowedTypes": [],
+				"restrictedTypes": []
+			}
+		},
+		"CssClass": {
+			"type": "string",
+			"format": "shortString",
+			"displayName": "CSS Class",
+			"description": "Custom CSS class name(s) applied to the container wrapper.",
+			"localized": false,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 20,
+			"editorSettings": {}
+		}
+	}
+}

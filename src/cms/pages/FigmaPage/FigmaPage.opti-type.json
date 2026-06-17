@@ -1,0 +1,89 @@
+{
+	"key": "FigmaPage",
+	"displayName": "Figma Page",
+	"description": "",
+	"baseType": "page",
+	"sortOrder": 0,
+	"mayContainTypes": [
+		"*"
+	],
+	"mediaFileExtensions": [],
+	"compositionBehaviors": [],
+	"properties": {
+		"Background": {
+			"type": "contentReference",
+			"displayName": "Background",
+			"description": "",
+			"localized": true,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 0,
+			"allowedTypes": [
+				"_image"
+			],
+			"restrictedTypes": []
+		},
+		"EyebrowText": {
+			"type": "string",
+			"format": "shortString",
+			"displayName": "Eyebrow Text",
+			"description": "",
+			"localized": true,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 175,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"Heading": {
+			"type": "string",
+			"format": "shortString",
+			"displayName": "Heading",
+			"description": "",
+			"localized": true,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 100,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"Subheading": {
+			"type": "string",
+			"displayName": "Subheading",
+			"description": "",
+			"localized": false,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 150,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"Body": {
+			"type": "richText",
+			"displayName": "Body",
+			"description": "",
+			"localized": true,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 200,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"ContentArea": {
+			"type": "array",
+			"displayName": "Content Area",
+			"description": "",
+			"localized": false,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 300,
+			"allowedTypes": [],
+			"restrictedTypes": [],
+			"items": {
+				"type": "content",
+				"allowedTypes": [],
+				"restrictedTypes": []
+			}
+		}
+	}
+}

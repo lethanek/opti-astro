@@ -1,0 +1,50 @@
+{
+	"key": "DefaultContainerWidget",
+	"displayName": "Container Widget Default",
+	"contentType": "ContainerWidget",
+	"isDefault": true,
+	"settings": {
+		"layout": {
+			"displayName": "Layout",
+			"editor": "select",
+			"sortOrder": 10,
+			"choices": {
+				"stack": {
+					"displayName": "Stacked (vertical)",
+					"sortOrder": 10
+				},
+				"row": {
+					"displayName": "Row (horizontal, wrap)",
+					"sortOrder": 20
+				}
+			}
+		},
+		"gap": {
+			"displayName": "Gap Between Items",
+			"editor": "select",
+			"sortOrder": 20,
+			"choices": {
+				"gap_0": {
+					"displayName": "None",
+					"sortOrder": 10
+				},
+				"gap_2": {
+					"displayName": "0.5rem / 8px",
+					"sortOrder": 20
+				},
+				"gap_4": {
+					"displayName": "1rem / 16px",
+					"sortOrder": 30
+				},
+				"gap_6": {
+					"displayName": "1.5rem / 24px",
+					"sortOrder": 40
+				},
+				"gap_8": {
+					"displayName": "2rem / 32px",
+					"sortOrder": 50
+				}
+			}
+		}
+	}
+}
