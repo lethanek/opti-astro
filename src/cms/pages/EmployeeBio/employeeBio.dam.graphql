@@ -17,4 +17,12 @@ fragment EmployeeBio on EmployeeBio {
     Bio {
         html
     }
+    AdditionalContent {
+        _metadata {
+            key
+            types
+            version
+        }
+        ...ContentArea
+    }
 }

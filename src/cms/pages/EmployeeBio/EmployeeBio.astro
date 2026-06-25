@@ -5,6 +5,7 @@ import type { EmployeeBioFragment } from '../../../../__generated/sdk';
 import { getOptimizelySdk } from '../../../graphql/getSdk';
 import type { ContentPayload } from '../../../graphql/shared/ContentPayload';
 import Layout from '../../../layouts/Layout.astro';
+import ContentArea from '../../shared/ContentArea/ContentArea.astro';
 import { isEditContext } from '../../shared/utils.ts';
 
 const isCmsEdit = isEditContext(Astro.url);
@@ -195,6 +196,23 @@ const pageClass = 'page-employee-bio';
                         data-epi-edit={isCmsEdit ? 'Bio' : undefined}
                         set:html={bio.Bio.html}
                     />
+                )
+            }
+
+            <!-- Additional content blocks -->
+            {
+                bio?.AdditionalContent && bio.AdditionalContent.length > 0 && (
+                    <div
+                        class="mt-12"
+                        data-epi-edit={isCmsEdit ? 'AdditionalContent' : undefined}
+                    >
+                        {bio.AdditionalContent.map((contentAreaItem: any) => (
+                            <ContentArea
+                                contentPayload={contentPayload}
+                                contentAreaItem={contentAreaItem}
+                            />
+                        ))}
+                    </div>
                 )
             }
         </main>

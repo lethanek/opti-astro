@@ -104,6 +104,24 @@
 			"sortOrder": 200,
 			"allowedTypes": [],
 			"restrictedTypes": []
+		},
+		"AdditionalContent": {
+			"type": "array",
+			"displayName": "Additional Content",
+			"description": "",
+			"localized": false,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 300,
+			"allowedTypes": [],
+			"restrictedTypes": [],
+			"items": {
+				"type": "content",
+				"allowedTypes": [
+					"_component"
+				],
+				"restrictedTypes": []
+			}
 		}
 	}
 }

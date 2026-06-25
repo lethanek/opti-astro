@@ -1,5 +1,4 @@
 ---
-import type { Locales } from 'astro';
 import { getOptimizelySdk } from '../../../../graphql/getSdk';
 import type { ContentPayload } from '../../../../graphql/shared/ContentPayload';
 import { isEditContext } from '../../../shared/utils.ts';
@@ -26,16 +25,20 @@ const nodeType = grid.nodeType;
 
 nodeType && (contentPayload.key = grid.key);
 
+// When a form arrives through a content area / shared block (no nodeType), fetch it
+// by its OWN content key + version, not the host page's. Falling back to the page's
+// values keeps the experience-composition path unchanged.
+const formContentKey = grid?._metadata?.key ?? contentPayload.key;
+const formContentVersion = grid?._metadata?.version ?? contentPayload.ver;
+
 const optiResponse =
     !nodeType &&
     (await getOptimizelySdk(contentPayload).formById({
-        key: contentPayload.key,
-        //@ts-ignore
-        loc: contentPayload.loc as Locales,
-        ver: contentPayload.ver,
+        key: formContentKey,
+        version: formContentVersion,
     }));
 
-const formId = contentPayload.key || grid.key || 'opti-form';
+const formId = formContentKey || grid.key || 'opti-form';
 
 const formItem = optiResponse?.['_Component']?.item;
 const formComposition = formItem && 'composition' in formItem ? formItem.composition : formItem;
