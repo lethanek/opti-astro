@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onDestroy } from 'svelte';
 	import {
 		getTitle,
 		getSubtitle,
@@ -28,6 +29,118 @@
 	let error = $state<string | null>(null);
 	let advisors = $state<any[]>([]);
 	let hasSearched = $state(false);
+	let userCoords = $state<{ lat: number; lng: number } | null>(null);
+
+	// Leaflet map state. Leaflet touches `window`/`document` at import time, so
+	// it is loaded lazily in the browser only (this component is client:load).
+	let mapEl = $state<HTMLDivElement | null>(null);
+	let leaflet: any = null;
+	let map: any = null;
+	let markersLayer: any = null;
+
+	// (Re)render the map whenever we have advisors with coordinates and the
+	// container is mounted. $effect runs in the browser only.
+	$effect(() => {
+		// Track dependencies so the effect re-runs when results change.
+		const currentAdvisors = advisors;
+		const el = mapEl;
+		if (!el || currentAdvisors.length === 0) return;
+		renderMap();
+	});
+
+	async function renderMap() {
+		if (!leaflet) {
+			const mod = await import('leaflet');
+			await import('leaflet/dist/leaflet.css');
+			leaflet = mod.default ?? mod;
+		}
+		if (!mapEl) return;
+
+		if (!map) {
+			map = leaflet.map(mapEl, { scrollWheelZoom: false });
+			leaflet
+				.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+					maxZoom: 19,
+					attribution: '&copy; OpenStreetMap contributors',
+				})
+				.addTo(map);
+		}
+
+		// Reset markers from any previous search.
+		if (markersLayer) {
+			markersLayer.remove();
+		}
+		markersLayer = leaflet.layerGroup().addTo(map);
+
+		const redIcon = leaflet.divIcon({
+			className: 'advisor-pin',
+			html: `<svg width="28" height="40" viewBox="0 0 24 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+				<path fill="#e11d48" stroke="#ffffff" stroke-width="1.5" d="M12 .75C6.063.75 1.25 5.563 1.25 11.5c0 7.844 9.5 22.5 10.75 22.5S22.75 19.344 22.75 11.5C22.75 5.563 17.937.75 12 .75z"/>
+				<circle cx="12" cy="11.5" r="4" fill="#ffffff"/>
+			</svg>`,
+			iconSize: [28, 40],
+			iconAnchor: [14, 40],
+			popupAnchor: [0, -36],
+		});
+
+		const bounds: Array<[number, number]> = [];
+
+		for (const advisor of advisors) {
+			const coords = advisor.coordinates;
+			if (!coords || typeof coords.lat !== 'number' || typeof coords.lng !== 'number') {
+				continue;
+			}
+			const point: [number, number] = [coords.lat, coords.lng];
+			const popupHtml = `<strong>${escapeHtml(getTitle(advisor))}</strong>${
+				advisor.Address ? `<br>${escapeHtml(advisor.Address)}` : ''
+			}`;
+			leaflet.marker(point, { icon: redIcon, title: getTitle(advisor) })
+				.bindPopup(popupHtml)
+				.addTo(markersLayer);
+			bounds.push(point);
+		}
+
+		// Mark the visitor's own location for context.
+		if (userCoords) {
+			const youPoint: [number, number] = [userCoords.lat, userCoords.lng];
+			leaflet
+				.circleMarker(youPoint, {
+					radius: 7,
+					color: '#ffffff',
+					weight: 2,
+					fillColor: '#2563eb',
+					fillOpacity: 1,
+				})
+				.bindPopup('You are here')
+				.addTo(markersLayer);
+			bounds.push(youPoint);
+		}
+
+		if (bounds.length > 0) {
+			map.fitBounds(bounds, { padding: [40, 40], maxZoom: 13 });
+		}
+
+		// The container may have been sized after init; ensure tiles fill it.
+		setTimeout(() => map && map.invalidateSize(), 0);
+	}
+
+	function destroyMap() {
+		if (map) {
+			map.remove();
+			map = null;
+			markersLayer = null;
+		}
+	}
+
+	function escapeHtml(value: string): string {
+		return String(value ?? '')
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;');
+	}
+
+	onDestroy(destroyMap);
 
 	function requestLocation() {
 		if (isEditMode) return;
@@ -67,6 +180,7 @@
 	}
 
 	async function fetchNearby(lat: number, lng: number) {
+		userCoords = { lat, lng };
 		try {
 			const params = new URLSearchParams({
 				lat: lat.toString(),
@@ -100,6 +214,8 @@
 		advisors = [];
 		hasSearched = false;
 		error = null;
+		userCoords = null;
+		destroyMap();
 	}
 
 	function formatDistance(advisor: any): string {
@@ -154,6 +270,14 @@
 				Advisors closest to you
 			</h3>
 
+			<!-- Map: grayscale tiles with red advisor pins -->
+			<div
+				bind:this={mapEl}
+				class="advisor-map w-full h-[400px] rounded-lg overflow-hidden mb-4 z-0"
+				role="application"
+				aria-label="Map showing the advisors closest to you"
+			></div>
+
 			<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 				{#each advisors as advisor (advisor._metadata.key)}
 					{@const imageUrl = getImageUrl(advisor)}
@@ -206,3 +330,18 @@
 		</section>
 	{/if}
 </div>
+
+<style>
+	/* Grayscale the basemap tiles only — markers/pins keep their colour
+	   because they live in a separate Leaflet pane. */
+	.advisor-map :global(.leaflet-tile-pane) {
+		filter: grayscale(100%);
+	}
+
+	/* The red pin uses a transparent divIcon, so strip Leaflet's default
+	   marker background/border. */
+	.advisor-map :global(.advisor-pin) {
+		background: transparent;
+		border: none;
+	}
+</style>
