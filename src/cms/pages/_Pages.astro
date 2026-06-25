@@ -1,6 +1,7 @@
 ---
 import type { ContentPayload } from '../../graphql/shared/ContentPayload';
 import ArticlePage from './ArticlePage/ArticlePage.astro';
+import EmployeeBio from './EmployeeBio/EmployeeBio.astro';
 import FigmaPage from './FigmaPage/FigmaPage.astro';
 import LandingPage from './LandingPage/LandingPage.astro';
 import MockupPage from './MockupPage/MockupPage.astro';
@@ -10,6 +11,7 @@ const pageType = contentPayload.types[0];
 ---
 
 {pageType === 'ArticlePage' && <ArticlePage contentPayload={contentPayload} />}
+{pageType === 'EmployeeBio' && <EmployeeBio contentPayload={contentPayload} />}
 {pageType === 'FigmaPage' && <FigmaPage contentPayload={contentPayload} />}
 {pageType === 'LandingPage' && <LandingPage contentPayload={contentPayload} />}
 {pageType === 'MockupPage' && <MockupPage contentPayload={contentPayload} />}

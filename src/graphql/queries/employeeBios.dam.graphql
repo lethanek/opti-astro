@@ -1,0 +1,44 @@
+query employeeBios(
+    $locale: [Locales]
+    $domain: String
+    $limit: Int = 100
+) {
+    # All published EmployeeBio pages (used by the "Find an Advisor Close to Me" feature)
+    EmployeeBio(
+        locale: $locale
+        limit: $limit
+        where: {
+            _and: [
+                # Domain filter (always applied)
+                { _metadata: { url: { base: { eq: $domain } } } }
+                # Status filter - only show published content
+                { _metadata: { status: { eq: "Published" } } }
+            ]
+        }
+    ) {
+        total
+        items {
+            _metadata {
+                key
+                displayName
+                published
+                url {
+                    default
+                    hierarchical
+                    base
+                }
+                types
+            }
+            FirstName
+            LastName
+            JobTitle
+            Email
+            Phone
+            Address
+            Headshot {
+                ...ContentUrl
+                ...ContentReferenceItem
+            }
+        }
+    }
+}

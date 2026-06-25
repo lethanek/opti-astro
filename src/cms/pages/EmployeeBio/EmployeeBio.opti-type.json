@@ -1,0 +1,109 @@
+{
+	"key": "EmployeeBio",
+	"displayName": "Employee Bio",
+	"description": "Employee Bio",
+	"baseType": "_page",
+	"sortOrder": 0,
+	"mayContainTypes": [
+		"*"
+	],
+	"mediaFileExtensions": [],
+	"compositionBehaviors": [],
+	"properties": {
+		"FirstName": {
+			"type": "string",
+			"format": "shortString",
+			"displayName": "First name",
+			"description": "",
+			"localized": false,
+			"required": false,
+			"group": "Information",
+			"sortOrder": -100,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"LastName": {
+			"type": "string",
+			"format": "shortString",
+			"displayName": "Last Name",
+			"description": "",
+			"localized": false,
+			"required": false,
+			"group": "Information",
+			"sortOrder": -50,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"JobTitle": {
+			"type": "string",
+			"format": "shortString",
+			"displayName": "Job Title",
+			"description": "",
+			"localized": false,
+			"required": false,
+			"group": "Information",
+			"sortOrder": -37,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"Headshot": {
+			"type": "contentReference",
+			"displayName": "Headshot",
+			"description": "",
+			"localized": false,
+			"required": false,
+			"group": "Information",
+			"sortOrder": -25,
+			"allowedTypes": [
+				"_image"
+			],
+			"restrictedTypes": []
+		},
+		"Address": {
+			"type": "string",
+			"displayName": "Address",
+			"description": "",
+			"localized": false,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 0,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"Phone": {
+			"type": "string",
+			"format": "shortString",
+			"displayName": "Phone",
+			"description": "",
+			"localized": false,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 100,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"Email": {
+			"type": "string",
+			"format": "shortString",
+			"displayName": "Email Address",
+			"description": "",
+			"localized": false,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 150,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"Bio": {
+			"type": "richText",
+			"displayName": "Bio",
+			"description": "",
+			"localized": true,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 200,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		}
+	}
+}

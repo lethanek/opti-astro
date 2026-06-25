@@ -6,6 +6,7 @@
 	import SearchResultCard from './SearchResultCard.svelte';
 	import SearchPagination from './SearchPagination.svelte';
 	import SkeletonCard from './SkeletonCard.svelte';
+	import NearbyAdvisors from './NearbyAdvisors.svelte';
 
 	// Props
 	interface Props {
@@ -367,6 +368,14 @@
 
 		<!-- Main Content Area -->
 		<main class:lg:col-span-3={filtersVisible} class:lg:col-span-1={!filtersVisible}>
+			<!-- Find an Advisor Close to Me (full page view only) -->
+			{#if !compact && !isModal}
+				<NearbyAdvisors
+					config={{ locale: config.locale, domain: config.domain }}
+					{isEditMode}
+				/>
+			{/if}
+
 			<!-- Search Bar and Controls -->
 			<FacetedSearchControls
 				{searchTerm}

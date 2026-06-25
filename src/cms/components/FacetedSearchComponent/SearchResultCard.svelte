@@ -4,6 +4,8 @@
         getTitle,
         getContentExcerpt,
         isExperience,
+        isEmployeeBio,
+        getSubtitle,
         getImageUrl,
         getImageAlt,
         getPlaceholderGradient
@@ -21,6 +23,7 @@
     const imageUrl = getImageUrl(result);
     const imageAlt = getImageAlt(result);
     const placeholderGradient = getPlaceholderGradient(result);
+    const subtitle = getSubtitle(result);
 
     const isPinnedResult = result._score >= 20000;
 
@@ -72,12 +75,18 @@
             </h2>
 
             <div class="flex items-center gap-2 text-xs text-base-content/60">
-                {#if result._metadata.published}
-					<span>{formatDate(result._metadata.published, locale)}</span>
-                {/if}
-                {#if !isExperience(result) && result.Author}
-                    <span>•</span>
-                    <span>{result.Author}</span>
+                {#if isEmployeeBio(result)}
+                    {#if subtitle}
+                        <span>{subtitle}</span>
+                    {/if}
+                {:else}
+                    {#if result._metadata.published}
+						<span>{formatDate(result._metadata.published, locale)}</span>
+                    {/if}
+                    {#if !isExperience(result) && result.Author}
+                        <span>•</span>
+                        <span>{result.Author}</span>
+                    {/if}
                 {/if}
             </div>
 
@@ -128,15 +137,15 @@
                     </a>
                 </h2>
 
-                {#if !isExperience(result) && result.SubHeading}
-                    <p class="text-base-content/70 mb-2">{result.SubHeading}</p>
+                {#if subtitle}
+                    <p class="text-base-content/70 mb-2">{subtitle}</p>
                 {/if}
 
 				<div class="flex items-center gap-4 text-sm text-base-content/60 mb-3">
-                    {#if !isExperience(result) && result.Author}
+                    {#if !isExperience(result) && !isEmployeeBio(result) && result.Author}
                         <span>By {result.Author}</span>
                     {/if}
-                    {#if result._metadata.published}
+                    {#if !isEmployeeBio(result) && result._metadata.published}
 						<span>{formatDate(result._metadata.published, locale)}</span>
                     {/if}
                 </div>

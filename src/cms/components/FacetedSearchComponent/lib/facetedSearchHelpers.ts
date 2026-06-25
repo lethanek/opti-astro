@@ -28,6 +28,19 @@ export const experienceSortOrderMap: Record<string, any> = {
 };
 
 /**
+ * Sort order mappings for EmployeeBio content type (no Heading field)
+ * Title sorting falls back to displayName since FirstName/LastName are not orderable
+ */
+export const employeeBioSortOrderMap: Record<string, any> = {
+	relevance: { _ranking: 'RELEVANCE' },
+	semantic: { _ranking: 'SEMANTIC' },
+	date_desc: { _metadata: { published: 'DESC' } },
+	date_asc: { _metadata: { published: 'ASC' } },
+	title_asc: { _metadata: { displayName: 'ASC' } },
+	title_desc: { _metadata: { displayName: 'DESC' } },
+};
+
+/**
  * Apply semantic weight to orderBy if enabled
  */
 export function applySemanticWeight(
@@ -51,13 +64,15 @@ export function getSortOrderBy(
 	searchTerm: string | null,
 	useSemanticSearch: boolean,
 	semanticWeight: number
-): { articlePageOrderBy: any; experienceOrderBy: any } {
+): { articlePageOrderBy: any; experienceOrderBy: any; employeeBioOrderBy: any } {
 	const baseArticleOrderBy = articlePageSortOrderMap[sortOrder] || articlePageSortOrderMap['relevance'];
 	const baseExperienceOrderBy = experienceSortOrderMap[sortOrder] || experienceSortOrderMap['relevance'];
+	const baseEmployeeBioOrderBy = employeeBioSortOrderMap[sortOrder] || employeeBioSortOrderMap['relevance'];
 
 	return {
 		articlePageOrderBy: applySemanticWeight(baseArticleOrderBy, searchTerm, useSemanticSearch, semanticWeight),
 		experienceOrderBy: applySemanticWeight(baseExperienceOrderBy, searchTerm, useSemanticSearch, semanticWeight),
+		employeeBioOrderBy: applySemanticWeight(baseEmployeeBioOrderBy, searchTerm, useSemanticSearch, semanticWeight),
 	};
 }
 
@@ -68,14 +83,25 @@ export function mergeAndSortResults(
 	articleItems: any[],
 	experienceItems: any[],
 	sortOrder: string,
-	domain: string
+	domain: string,
+	employeeBioItems: any[] = []
 ): any[] {
 	// Add type discriminator
 	const articleItemsWithType = articleItems.map((item: any) => ({ ...item, __contentType: 'ArticlePage' }));
 	const experienceItemsWithType = experienceItems.map((item: any) => ({ ...item, __contentType: 'Experience' }));
+	const employeeBioItemsWithType = employeeBioItems.map((item: any) => ({ ...item, __contentType: 'EmployeeBio' }));
 
 	// Combine items
-	let items = [...articleItemsWithType, ...experienceItemsWithType];
+	let items = [...articleItemsWithType, ...experienceItemsWithType, ...employeeBioItemsWithType];
+
+	// Resolve a comparable title for any content type
+	const getSortTitle = (item: any): string => {
+		if (item.__contentType === 'EmployeeBio') {
+			const fullName = `${item.FirstName || ''} ${item.LastName || ''}`.trim();
+			return (fullName || item._metadata?.displayName || '').toLowerCase();
+		}
+		return (item.Heading || item._metadata?.displayName || '').toLowerCase();
+	};
 
 	// Client-side sorting for merged results
 	if (sortOrder === 'relevance' || sortOrder === 'semantic') {
@@ -99,15 +125,11 @@ export function mergeAndSortResults(
 		});
 	} else if (sortOrder === 'title_asc') {
 		items.sort((a, b) => {
-			const titleA = (a.Heading || a._metadata?.displayName || '').toLowerCase();
-			const titleB = (b.Heading || b._metadata?.displayName || '').toLowerCase();
-			return titleA.localeCompare(titleB);
+			return getSortTitle(a).localeCompare(getSortTitle(b));
 		});
 	} else if (sortOrder === 'title_desc') {
 		items.sort((a, b) => {
-			const titleA = (a.Heading || a._metadata?.displayName || '').toLowerCase();
-			const titleB = (b.Heading || b._metadata?.displayName || '').toLowerCase();
-			return titleB.localeCompare(titleA);
+			return getSortTitle(b).localeCompare(getSortTitle(a));
 		});
 	}
 
@@ -129,7 +151,8 @@ export function mergeAndSortResults(
  */
 export function mergeFacets(
 	articleFacets: any,
-	experienceFacets: any
+	experienceFacets: any,
+	employeeBioFacets: any = null
 ): {
 	authors: Array<{ name: string; count: number }>;
 	types: Array<{ name: string; count: number }>;
@@ -137,13 +160,14 @@ export function mergeFacets(
 	// Process author facets (only from ArticlePage)
 	const authorFacets = articleFacets?.Author?.filter((f: any) => f?.name) || [];
 
-	// Merge type facets from both queries
+	// Merge type facets from all queries
 	const articleTypeFacets = articleFacets?._metadata?.types?.filter((f: any) => f?.name) || [];
 	const experienceTypeFacets = experienceFacets?._metadata?.types?.filter((f: any) => f?.name) || [];
+	const employeeBioTypeFacets = employeeBioFacets?._metadata?.types?.filter((f: any) => f?.name) || [];
 
 	// Combine type facets and merge counts for duplicate types
 	const typeFacetsMap = new Map<string, number>();
-	[...articleTypeFacets, ...experienceTypeFacets].forEach((f: any) => {
+	[...articleTypeFacets, ...experienceTypeFacets, ...employeeBioTypeFacets].forEach((f: any) => {
 		if (f?.name) {
 			typeFacetsMap.set(f.name, (typeFacetsMap.get(f.name) || 0) + (f.count || 0));
 		}

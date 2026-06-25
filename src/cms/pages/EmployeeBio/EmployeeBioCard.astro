@@ -1,0 +1,46 @@
+---
+import { Image as AstroImage } from 'astro:assets';
+import type { EmployeeBioExcerptFragment } from '../../../../__generated/sdk';
+import type { ContentPayload } from '../../../graphql/shared/ContentPayload';
+import LinkButton from '../../components/ButtonComponent/LinkButton.astro';
+import { isEditContext } from '../../shared/utils.ts';
+
+const isCmsEdit = isEditContext(Astro.url);
+
+export interface Props {
+    key: string;
+    data: EmployeeBioExcerptFragment;
+    contentPayload: ContentPayload;
+}
+const { key, data, contentPayload } = Astro.props as Props;
+
+const fullName = [data?.FirstName, data?.LastName].filter(Boolean).join(' ');
+const headshot =
+    (data.Headshot as any)?.item?.Url || data.Headshot?.url?.default;
+---
+
+<div
+    class="card bg-base-100 flex w-80 flex-shrink-0 flex-col shadow-sm"
+    data-epi-block-id={(isCmsEdit && key) || undefined}
+>
+    <figure>
+        <AstroImage
+            class="aspect-3/4 w-full object-cover"
+            src={headshot ?? '/placeholder.png'}
+            alt={`Headshot of ${fullName}` || 'Employee headshot'}
+            width={400}
+            height={533}
+        />
+    </figure>
+    <div class="card-body">
+        <h2 class="card-title">{fullName}</h2>
+        {data.JobTitle && <p class="text-base-content/70">{data.JobTitle}</p>}
+        <div class="card-actions mt-auto justify-end">
+            <LinkButton
+                cssClasses="btn-primary"
+                link={data._metadata?.url?.hierarchical}
+                >View profile</LinkButton
+            >
+        </div>
+    </div>
+</div>

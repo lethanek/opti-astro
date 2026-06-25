@@ -30,6 +30,11 @@ export function getTitle(result: any): string {
 		// Try SEO MetaTitle first, then displayName
 		return result.BlankExperienceSeoSettings?.MetaTitle || result._metadata?.displayName || 'Untitled';
 	}
+	if (result.__contentType === 'EmployeeBio') {
+		// Build full name from FirstName + LastName, fall back to displayName
+		const fullName = `${result.FirstName || ''} ${result.LastName || ''}`.trim();
+		return fullName || result._metadata?.displayName || 'Untitled';
+	}
 	// ArticlePage
 	return result.Heading || result._metadata?.displayName || 'Untitled';
 }
@@ -47,6 +52,10 @@ export function getContentExcerpt(result: any): string {
 		const fulltext = Array.isArray(result._fulltext) ? result._fulltext.join(' ') : (result._fulltext || '');
 		return getExcerpt(fulltext, 200);
 	}
+	if (result.__contentType === 'EmployeeBio') {
+		// Use the Bio rich text, truncated
+		return result.Bio?.html ? getExcerpt(result.Bio.html) : '';
+	}
 	// ArticlePage
 	return result.Body?.html ? getExcerpt(result.Body.html) : '';
 }
@@ -56,6 +65,27 @@ export function getContentExcerpt(result: any): string {
  */
 export function isExperience(result: any): boolean {
 	return result.__contentType === 'Experience';
+}
+
+/**
+ * Check if a result is an EmployeeBio content type
+ */
+export function isEmployeeBio(result: any): boolean {
+	return result.__contentType === 'EmployeeBio';
+}
+
+/**
+ * Get a subtitle for a result (e.g. job title for an EmployeeBio, subheading for an ArticlePage)
+ */
+export function getSubtitle(result: any): string {
+	if (result.__contentType === 'EmployeeBio') {
+		return result.JobTitle || '';
+	}
+	if (result.__contentType === 'Experience') {
+		return '';
+	}
+	// ArticlePage
+	return result.SubHeading || '';
 }
 
 /**
@@ -69,6 +99,13 @@ export function getImageUrl(result: any): string | null {
 		// Try Content Reference URL first, then DAM asset URL
 		return result.BlankExperienceSeoSettings?.SharingImage?.url?.default ||
 		       result.BlankExperienceSeoSettings?.SharingImage?.item?.Url ||
+		       null;
+	}
+	if (result.__contentType === 'EmployeeBio') {
+		// EmployeeBio: get Headshot
+		// Try Content Reference URL first, then DAM asset URL
+		return result.Headshot?.url?.default ||
+		       result.Headshot?.item?.Url ||
 		       null;
 	}
 	// ArticlePage: get PromoImage
@@ -86,6 +123,12 @@ export function getImageAlt(result: any): string {
 		// Experience: get alt text from SharingImage
 		return result.BlankExperienceSeoSettings?.SharingImage?.item?.AltText ||
 		       result.BlankExperienceSeoSettings?.SharingImage?.item?._metadata?.displayName ||
+		       getTitle(result);
+	}
+	if (result.__contentType === 'EmployeeBio') {
+		// EmployeeBio: get alt text from Headshot, fall back to the person's name
+		return result.Headshot?.item?.AltText ||
+		       result.Headshot?.item?._metadata?.displayName ||
 		       getTitle(result);
 	}
 	// ArticlePage: get alt text from PromoImage

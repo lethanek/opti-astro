@@ -23,7 +23,11 @@ export const GET: APIRoute = async ({ url }) => {
 		const typeFilters = url.searchParams.getAll('types[]');
 
 		// Build orderBy with optional semantic weight using shared helper
-		const { articlePageOrderBy: orderBy, experienceOrderBy: orderByExperience } = getSortOrderBy(
+		const {
+			articlePageOrderBy: orderBy,
+			experienceOrderBy: orderByExperience,
+			employeeBioOrderBy: orderByEmployeeBio,
+		} = getSortOrderBy(
 			sortOrder,
 			searchTerm,
 			useSemanticSearch,
@@ -52,6 +56,7 @@ export const GET: APIRoute = async ({ url }) => {
 			offset: 0, // Always fetch from start, we'll slice after merging
 			orderBy: orderBy,
 			orderByExperience: orderByExperience,
+			orderByEmployeeBio: orderByEmployeeBio,
 			authorFilters: authorFilters.length > 0 ? authorFilters : null,
 			typeFilters: typeFilters.length > 0 ? typeFilters : null,
 		});
@@ -66,17 +71,22 @@ export const GET: APIRoute = async ({ url }) => {
 		const experienceTotal = authorFilters.length > 0 ? 0 : searchResults._Experience?.total || 0;
 		const experienceFacets = searchResults._Experience?.facets;
 
+		// If author filters are applied, skip EmployeeBio results (no authors on EmployeeBios)
+		const employeeBioItems = authorFilters.length > 0 ? [] : searchResults.EmployeeBio?.items || [];
+		const employeeBioTotal = authorFilters.length > 0 ? 0 : searchResults.EmployeeBio?.total || 0;
+		const employeeBioFacets = searchResults.EmployeeBio?.facets;
+
 		// Merge and sort ALL results using shared helper
-		const allMergedItems = mergeAndSortResults(articleItems, experienceItems, sortOrder, domain);
+		const allMergedItems = mergeAndSortResults(articleItems, experienceItems, sortOrder, domain, employeeBioItems);
 
 		// Apply pagination to merged results
 		const items = allMergedItems.slice(offset, offset + limit);
 
-		// Combine totals - this represents the total number of items available across both types
-		const total = articleTotal + experienceTotal;
+		// Combine totals - this represents the total number of items available across all types
+		const total = articleTotal + experienceTotal + employeeBioTotal;
 
 		// Merge facets using shared helper
-		const facets = mergeFacets(articleFacets, experienceFacets);
+		const facets = mergeFacets(articleFacets, experienceFacets, employeeBioFacets);
 
 		return new Response(
 			JSON.stringify({

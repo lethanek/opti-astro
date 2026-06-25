@@ -1,0 +1,13 @@
+fragment EmployeeBioExcerpt on EmployeeBio {
+    _metadata {
+        ...PageUrl
+    }
+    FirstName
+    LastName
+    JobTitle
+    Headshot {
+        ...ContentUrl
+    }
+    Email
+    Phone
+}
