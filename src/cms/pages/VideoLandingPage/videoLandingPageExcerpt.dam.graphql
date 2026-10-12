@@ -1,0 +1,20 @@
+fragment VideoLandingPageExcerpt on VideoLandingPage {
+    _metadata {
+        ...PageUrl
+    }
+    Heading
+    SubHeading
+    VideoType
+    DurationSeconds
+    PublishedDate
+    PosterImage {
+        ...ContentUrl
+        ...ContentReferenceItem
+    }
+    Summary {
+        html
+    }
+    SeoSettings {
+        ...PageSeoSettingsProperty
+    }
+}

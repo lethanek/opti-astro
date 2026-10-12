@@ -1,0 +1,323 @@
+---
+import type { Locales } from 'astro';
+import { format } from 'date-fns';
+import type { VideoLandingPageFragment } from '../../../../__generated/sdk';
+import { getOptimizelySdk } from '../../../graphql/getSdk';
+import type { ContentPayload } from '../../../graphql/shared/ContentPayload';
+import Layout from '../../../layouts/Layout.astro';
+import ContentArea from '../../shared/ContentArea/ContentArea.astro';
+import LinkButton from '../../components/ButtonComponent/LinkButton.astro';
+import { isEditContext, getLink } from '../../shared/utils.ts';
+import type { ButtonLinkData } from '../../shared/utils.ts';
+import { formatDuration, videoTypeLabel } from './videoLandingPageHelpers';
+
+const isCmsEdit = isEditContext(Astro.url);
+
+export interface Props {
+    contentPayload: ContentPayload;
+}
+const { contentPayload } = Astro.props as Props;
+
+const optiResponse = await getOptimizelySdk(contentPayload).pageById({
+    key: contentPayload.key,
+    //@ts-ignore
+    loc: contentPayload.loc as Locales,
+    ver: contentPayload.ver,
+});
+
+const page = optiResponse?._Page?.item as VideoLandingPageFragment;
+
+const videoUrl = (page?.VideoAsset as any)?.item?.Url || page?.VideoAsset?.url?.default || null;
+const posterUrl = (page?.PosterImage as any)?.item?.Url || page?.PosterImage?.url?.default || null;
+const captionsUrl = (page?.CaptionsFile as any)?.item?.Url || page?.CaptionsFile?.url?.default || null;
+const transcriptFileUrl = (page?.TranscriptFile as any)?.item?.Url || page?.TranscriptFile?.url?.default || null;
+
+const currentDomain = Astro.url.origin;
+const primaryCtaLink = page?.PrimaryCta?.url ? getLink(page.PrimaryCta as ButtonLinkData, currentDomain) : null;
+const secondaryCtaLink = page?.SecondaryCta?.url ? getLink(page.SecondaryCta as ButtonLinkData, currentDomain) : null;
+
+const duration = formatDuration(page?.DurationSeconds);
+const publishedDate = page?.PublishedDate
+    ? format(new Date(page.PublishedDate), 'dd MMM yyyy')
+    : null;
+
+const presenters = (page?.Presenters || []).filter((p: any) => p?.item);
+const faqs = page?.Faqs || [];
+const mainContentItems = page?.MainContentArea || [];
+const relatedContent = (page?.RelatedContent || []).filter((r: any) => r?.item);
+const schemas = page?.Schemas || [];
+
+const graphType =
+    page?.SeoSettings?.GraphType && page?.SeoSettings?.GraphType !== '-'
+        ? page?.SeoSettings?.GraphType
+        : 'video.other';
+const defaultUrl = page?._metadata?.url?.default || '';
+const hierarchicalUrl =
+    page?._metadata?.url?.type === 'SIMPLE' ? page?._metadata?.url?.hierarchical : '';
+const extPreviewEnabled = page?.PageAdminSettings?.EnableExternalPreview ?? false;
+
+const pageClass = 'page-video-landing';
+---
+
+<Layout
+    title={page.SeoSettings?.MetaTitle ?? page?.Heading ?? page?._metadata?.displayName ?? 'Video'}
+    description={page.SeoSettings?.MetaDescription ?? page?.Summary?.html?.replace(/<[^>]*>/g, '') ?? ''}
+    graphtype={graphType}
+    indexing={page.SeoSettings?.Indexing ?? false}
+    contentPayload={contentPayload}
+    defaultUrl={defaultUrl}
+    hierarchicalUrl={hierarchicalUrl ?? ''}
+    extPreviewEnabled={extPreviewEnabled}
+>
+    {
+        schemas.map((schema) =>
+            schema ? <script type="application/ld+json" set:html={schema} is:inline /> : null
+        )
+    }
+
+    <div class={`max-w-screen-6xl mx-auto ${pageClass}`}>
+        <main class="mx-auto max-w-screen-xl px-4 py-10 2xl:px-0">
+            <!-- Header -->
+            <header class="mx-auto max-w-3xl text-center">
+                {
+                    page?.VideoType && (
+                        <span class="badge badge-outline mb-3">
+                            {videoTypeLabel(page.VideoType)}
+                        </span>
+                    )
+                }
+                <h1
+                    class="text-base-content text-4xl leading-tight font-semibold lg:text-5xl"
+                    data-epi-edit={isCmsEdit ? 'Heading' : undefined}
+                >
+                    {page?.Heading}
+                </h1>
+                {
+                    page?.SubHeading && (
+                        <p
+                            class="text-base-content/70 mt-3 text-lg"
+                            data-epi-edit={isCmsEdit ? 'SubHeading' : undefined}
+                        >
+                            {page.SubHeading}
+                        </p>
+                    )
+                }
+                <div class="text-base-content/60 mt-4 flex flex-wrap items-center justify-center gap-3 text-sm">
+                    {publishedDate && <span data-epi-edit={isCmsEdit ? 'PublishedDate' : undefined}>{publishedDate}</span>}
+                    {duration && <span>{duration}</span>}
+                </div>
+                {
+                    page?.Topics && page.Topics.length > 0 && (
+                        <div class="mt-4 flex flex-wrap justify-center gap-2" data-epi-edit={isCmsEdit ? 'Topics' : undefined}>
+                            {page.Topics.map((topic) => (
+                                <span class="badge badge-ghost">{topic}</span>
+                            ))}
+                        </div>
+                    )
+                }
+            </header>
+
+            <!-- Video -->
+            <div class="bg-base-200 relative mx-auto mt-8 w-full max-w-4xl overflow-hidden rounded-2xl" data-epi-edit={isCmsEdit ? 'VideoAsset' : undefined}>
+                {
+                    page?.GateVideo ? (
+                        <div class="relative aspect-video w-full">
+                            {posterUrl && (
+                                <img
+                                    src={posterUrl}
+                                    alt={page?.Heading || 'Video poster'}
+                                    class="absolute inset-0 h-full w-full object-cover blur-sm brightness-50"
+                                />
+                            )}
+                            <div class="absolute inset-0 flex flex-col items-center justify-center gap-4 p-6 text-center">
+                                <svg viewBox="0 0 24 24" class="text-neutral-content h-12 w-12" fill="currentColor">
+                                    <path d="M12 17a2 2 0 002-2v-2a2 2 0 10-4 0v2a2 2 0 002 2zm6-6V9a6 6 0 10-12 0v2a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2v-6a2 2 0 00-2-2zM8 9a4 4 0 118 0v2H8V9z" />
+                                </svg>
+                                <p class="text-neutral-content text-lg font-medium">
+                                    This video is available after you fill out a short form.
+                                </p>
+                                {primaryCtaLink && (
+                                    <LinkButton cssClasses="btn-primary" link={primaryCtaLink}>
+                                        {page?.PrimaryCta?.text || 'Watch the video'}
+                                    </LinkButton>
+                                )}
+                            </div>
+                        </div>
+                    ) : videoUrl ? (
+                        <video
+                            src={videoUrl}
+                            poster={posterUrl ?? undefined}
+                            class="aspect-video w-full"
+                            controls
+                            playsinline
+                        >
+                            {captionsUrl && <track kind="captions" src={captionsUrl} default />}
+                        </video>
+                    ) : (
+                        <div class="text-base-content/50 flex aspect-video w-full items-center justify-center">
+                            No video available
+                        </div>
+                    )
+                }
+            </div>
+
+            <!-- Summary + CTAs -->
+            <div class="mx-auto mt-8 max-w-3xl">
+                {
+                    page?.Summary?.html && (
+                        <div
+                            class="prose dark:prose-invert max-w-none"
+                            data-epi-edit={isCmsEdit ? 'Summary' : undefined}
+                            set:html={page.Summary.html}
+                        />
+                    )
+                }
+
+                {
+                    (primaryCtaLink || secondaryCtaLink) && !page?.GateVideo && (
+                        <div class="mt-6 flex flex-wrap justify-center gap-3">
+                            {primaryCtaLink && (
+                                <LinkButton cssClasses="btn-primary" link={primaryCtaLink}>
+                                    {page?.PrimaryCta?.text || 'Learn more'}
+                                </LinkButton>
+                            )}
+                            {secondaryCtaLink && (
+                                <LinkButton cssClasses="btn-outline" link={secondaryCtaLink}>
+                                    {page?.SecondaryCta?.text || 'Learn more'}
+                                </LinkButton>
+                            )}
+                        </div>
+                    )
+                }
+
+                {
+                    page?.KeyTakeaways && page.KeyTakeaways.length > 0 && (
+                        <div class="mt-8" data-epi-edit={isCmsEdit ? 'KeyTakeaways' : undefined}>
+                            <h2 class="text-xl font-semibold">Key Takeaways</h2>
+                            <ul class="mt-3 list-disc space-y-1 ps-5">
+                                {page.KeyTakeaways.map((item) => <li>{item}</li>)}
+                            </ul>
+                        </div>
+                    )
+                }
+            </div>
+
+            <!-- Presenters -->
+            {
+                presenters.length > 0 && (
+                    <div class="mt-12">
+                        <h2 class="mb-4 text-center text-xl font-semibold">Presenters</h2>
+                        <div class="flex flex-wrap justify-center gap-6">
+                            {presenters.map((presenter: any) => {
+                                const presenterName = [presenter.item?.FirstName, presenter.item?.LastName]
+                                    .filter(Boolean)
+                                    .join(' ');
+                                const presenterInitials = [presenter.item?.FirstName?.[0], presenter.item?.LastName?.[0]]
+                                    .filter(Boolean)
+                                    .join('');
+                                const presenterUrl = presenter.url?.hierarchical || presenter.url?.default;
+                                return (
+                                    <a
+                                        href={presenterUrl || undefined}
+                                        class="card bg-base-100 w-48 flex-shrink-0 shadow-sm"
+                                    >
+                                        <div class="card-body items-center p-4 text-center">
+                                            <div class="bg-base-200 text-base-content/60 flex h-16 w-16 items-center justify-center rounded-full text-xl font-semibold">
+                                                {presenterInitials}
+                                            </div>
+                                            <h3 class="mt-2 font-semibold">{presenterName}</h3>
+                                            {presenter.item?.JobTitle && (
+                                                <p class="text-base-content/70 text-sm">{presenter.item.JobTitle}</p>
+                                            )}
+                                        </div>
+                                    </a>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )
+            }
+
+            <!-- Body -->
+            {
+                page?.Body?.html && (
+                    <article
+                        class="prose dark:prose-invert md:prose-lg mx-auto mt-12 max-w-3xl"
+                        data-epi-edit={isCmsEdit ? 'Body' : undefined}
+                        set:html={page.Body.html}
+                    />
+                )
+            }
+
+            <!-- Transcript -->
+            {
+                page?.ShowTranscript && page?.TranscriptText?.html && (
+                    <div class="mx-auto mt-12 max-w-3xl" data-epi-edit={isCmsEdit ? 'TranscriptText' : undefined}>
+                        <details class="collapse-plus bg-base-100 border-base-300 collapse border">
+                            <summary class="collapse-title font-semibold">Transcript</summary>
+                            <div class="collapse-content prose dark:prose-invert max-w-none text-sm" set:html={page.TranscriptText.html} />
+                        </details>
+                        {page?.AllowTranscriptDownload && transcriptFileUrl && (
+                            <div class="mt-3 text-center">
+                                <LinkButton cssClasses="btn-sm btn-outline" link={transcriptFileUrl}>
+                                    Download transcript
+                                </LinkButton>
+                            </div>
+                        )}
+                    </div>
+                )
+            }
+
+            <!-- FAQs -->
+            {
+                faqs.length > 0 && (
+                    <div class="mx-auto mt-12 max-w-3xl" data-epi-edit={isCmsEdit ? 'Faqs' : undefined}>
+                        <h2 class="mb-4 text-xl font-semibold">Frequently Asked Questions</h2>
+                        <div class="flex flex-col gap-3">
+                            {faqs.map((item: any) => (
+                                <ContentArea contentPayload={contentPayload} contentAreaItem={item} />
+                            ))}
+                        </div>
+                    </div>
+                )
+            }
+
+            <!-- Main content area -->
+            {
+                mainContentItems.length > 0 && (
+                    <div class="mx-auto mt-12 flex max-w-screen-xl flex-wrap justify-center gap-8" data-epi-edit={isCmsEdit ? 'MainContentArea' : undefined}>
+                        {mainContentItems.map((item: any) => (
+                            <ContentArea contentPayload={contentPayload} contentAreaItem={item} />
+                        ))}
+                    </div>
+                )
+            }
+
+            <!-- Related content -->
+            {
+                relatedContent.length > 0 && (
+                    <div class="mx-auto mt-12 max-w-screen-xl">
+                        <h2 class="mb-4 text-center text-xl font-semibold">Related Content</h2>
+                        <div class="flex flex-wrap justify-center gap-4">
+                            {relatedContent.map((related: any) => {
+                                const url = related.url?.hierarchical || related.url?.default || '';
+                                return (
+                                    <a
+                                        href={url || '#'}
+                                        class="card bg-base-100 w-64 shadow-sm transition-shadow hover:shadow-md"
+                                    >
+                                        <div class="card-body">
+                                            <h3 class="card-title text-base">
+                                                {related.item?._metadata?.displayName}
+                                            </h3>
+                                        </div>
+                                    </a>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )
+            }
+        </main>
+    </div>
+</Layout>

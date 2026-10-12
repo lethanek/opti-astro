@@ -6,6 +6,7 @@ import FigmaPage from './FigmaPage/FigmaPage.astro';
 import LandingPage from './LandingPage/LandingPage.astro';
 import MockupPage from './MockupPage/MockupPage.astro';
 import FolderPage from './FolderPage/FolderPage.astro';
+import VideoLandingPage from './VideoLandingPage/VideoLandingPage.astro';
 const contentPayload = Astro.props.data as ContentPayload;
 const pageType = contentPayload.types[0];
 ---
@@ -16,3 +17,4 @@ const pageType = contentPayload.types[0];
 {pageType === 'LandingPage' && <LandingPage contentPayload={contentPayload} />}
 {pageType === 'MockupPage' && <MockupPage contentPayload={contentPayload} />}
 {pageType === 'FolderPage' && <FolderPage />}
+{pageType === 'VideoLandingPage' && <VideoLandingPage contentPayload={contentPayload} />}

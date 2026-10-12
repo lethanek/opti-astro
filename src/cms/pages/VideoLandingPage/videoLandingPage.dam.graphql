@@ -1,0 +1,87 @@
+fragment VideoLandingPage on VideoLandingPage {
+    _metadata {
+        ...PageUrl
+        published
+        displayName
+    }
+    Heading
+    SubHeading
+    VideoType
+    PublishedDate
+    DurationSeconds
+    Topics
+    KeyTakeaways
+    Schemas
+    VideoAsset {
+        ...ContentUrl
+        ...ContentReferenceItem
+    }
+    PosterImage {
+        ...ContentUrl
+        ...ContentReferenceItem
+    }
+    CaptionsFile {
+        ...ContentUrl
+        ...ContentReferenceItem
+    }
+    GateVideo
+    ShowTranscript
+    AllowTranscriptDownload
+    TranscriptText {
+        html
+    }
+    TranscriptFile {
+        ...ContentUrl
+        ...ContentReferenceItem
+    }
+    Summary {
+        html
+    }
+    Body {
+        html
+    }
+    PrimaryCta {
+        ...LinkUrl
+    }
+    SecondaryCta {
+        ...LinkUrl
+    }
+    Presenters {
+        ...ContentUrl
+        item {
+            ... on EmployeeBio {
+                FirstName
+                LastName
+                JobTitle
+            }
+        }
+    }
+    Faqs {
+        _metadata {
+            types
+        }
+        ...ContentArea
+    }
+    MainContentArea {
+        _metadata {
+            types
+        }
+        ...ContentArea
+    }
+    RelatedContent {
+        ...ContentUrl
+        item {
+            ... on _IContent {
+                _metadata {
+                    displayName
+                }
+            }
+        }
+    }
+    SeoSettings {
+        ...PageSeoSettingsProperty
+    }
+    PageAdminSettings {
+        ...PageAdminSettingsProperty
+    }
+}

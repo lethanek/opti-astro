@@ -1,0 +1,367 @@
+{
+	"key": "VideoLandingPage",
+	"displayName": "Video Landing Page",
+	"description": "Landing page for showcasing a single video asset, with summary, FAQs (built from Collapse components), and an optional downloadable transcript.",
+	"baseType": "_page",
+	"sortOrder": 0,
+	"mayContainTypes": [],
+	"mediaFileExtensions": [],
+	"compositionBehaviors": [],
+	"properties": {
+		"Heading": {
+			"type": "string",
+			"displayName": "Heading",
+			"description": "Primary page heading / video title",
+			"localized": true,
+			"required": true,
+			"group": "Information",
+			"sortOrder": 10,
+			"indexingType": "searchable",
+			"maxLength": 80,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"VideoAsset": {
+			"type": "contentReference",
+			"displayName": "Video",
+			"description": "The video asset from the DAM/media library",
+			"localized": false,
+			"required": true,
+			"group": "VideoDetails",
+			"sortOrder": 10,
+			"allowedTypes": [
+				"_video"
+			],
+			"restrictedTypes": []
+		},
+		"ShowTranscript": {
+			"type": "boolean",
+			"displayName": "Show Transcript Inline",
+			"description": "Display an expandable inline transcript on the page",
+			"localized": false,
+			"required": false,
+			"group": "Transcript",
+			"sortOrder": 10,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"GateVideo": {
+			"type": "boolean",
+			"displayName": "Gate Video Behind Form",
+			"description": "Require a form submission before the video plays",
+			"localized": false,
+			"required": false,
+			"group": "Conversion",
+			"sortOrder": 10,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"VideoType": {
+			"type": "string",
+			"format": "selectOne",
+			"displayName": "Video Type",
+			"description": "",
+			"localized": false,
+			"required": false,
+			"group": "VideoMetadata",
+			"sortOrder": 10,
+			"indexingType": "searchable",
+			"enum": [
+				{ "value": "demo", "displayName": "Demo" },
+				{ "value": "webinar", "displayName": "Webinar" },
+				{ "value": "customer_story", "displayName": "Customer Story" },
+				{ "value": "product_tour", "displayName": "Product Tour" },
+				{ "value": "explainer", "displayName": "Explainer" },
+				{ "value": "event_recording", "displayName": "Event Recording" },
+				{ "value": "training", "displayName": "Training" }
+			],
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"SubHeading": {
+			"type": "string",
+			"displayName": "Sub Heading",
+			"description": "Short supporting line shown under the heading",
+			"localized": true,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 20,
+			"indexingType": "searchable",
+			"maxLength": 160,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"PosterImage": {
+			"type": "contentReference",
+			"displayName": "Poster Image",
+			"description": "Thumbnail shown before playback and used as social share image fallback",
+			"localized": false,
+			"required": false,
+			"group": "VideoDetails",
+			"sortOrder": 20,
+			"allowedTypes": [
+				"_image"
+			],
+			"restrictedTypes": []
+		},
+		"TranscriptText": {
+			"type": "richText",
+			"displayName": "Transcript Text",
+			"description": "Full video transcript; also boosts SEO for the page",
+			"localized": true,
+			"required": false,
+			"group": "Transcript",
+			"sortOrder": 20,
+			"indexingType": "searchable",
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"PrimaryCta": {
+			"type": "link",
+			"displayName": "Primary CTA",
+			"description": "",
+			"localized": true,
+			"required": false,
+			"group": "Conversion",
+			"sortOrder": 20,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"Topics": {
+			"type": "array",
+			"displayName": "Topics",
+			"description": "Free-form tags for filtering on a video hub/library page",
+			"localized": false,
+			"required": false,
+			"group": "VideoMetadata",
+			"sortOrder": 20,
+			"allowedTypes": [],
+			"restrictedTypes": [],
+			"items": {
+				"type": "string",
+				"allowedTypes": [],
+				"restrictedTypes": []
+			}
+		},
+		"Summary": {
+			"type": "richText",
+			"displayName": "Summary",
+			"description": "Short 'what you'll learn/see' blurb shown near the video",
+			"localized": true,
+			"required": true,
+			"group": "Information",
+			"sortOrder": 30,
+			"indexingType": "searchable",
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"DurationSeconds": {
+			"type": "integer",
+			"displayName": "Duration (seconds)",
+			"description": "Video runtime in seconds, used for display labels and schema.org markup",
+			"localized": false,
+			"required": false,
+			"group": "VideoDetails",
+			"sortOrder": 30,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"TranscriptFile": {
+			"type": "contentReference",
+			"displayName": "Transcript File",
+			"description": "Downloadable transcript file (PDF/DOCX)",
+			"localized": false,
+			"required": false,
+			"group": "Transcript",
+			"sortOrder": 30,
+			"allowedTypes": [
+				"_media"
+			],
+			"restrictedTypes": []
+		},
+		"SecondaryCta": {
+			"type": "link",
+			"displayName": "Secondary CTA",
+			"description": "",
+			"localized": true,
+			"required": false,
+			"group": "Conversion",
+			"sortOrder": 30,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"Presenters": {
+			"type": "array",
+			"displayName": "Presenters",
+			"description": "Speakers/presenters featured in the video",
+			"localized": false,
+			"required": false,
+			"group": "VideoMetadata",
+			"sortOrder": 30,
+			"allowedTypes": [],
+			"restrictedTypes": [],
+			"items": {
+				"type": "contentReference",
+				"allowedTypes": [
+					"EmployeeBio"
+				],
+				"restrictedTypes": []
+			}
+		},
+		"Body": {
+			"type": "richText",
+			"displayName": "Body",
+			"description": "Optional long-form content below the video",
+			"localized": true,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 40,
+			"indexingType": "searchable",
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"CaptionsFile": {
+			"type": "contentReference",
+			"displayName": "Captions File",
+			"description": "VTT/SRT captions file for accessibility",
+			"localized": false,
+			"required": false,
+			"group": "VideoDetails",
+			"sortOrder": 40,
+			"allowedTypes": [
+				"_media"
+			],
+			"restrictedTypes": []
+		},
+		"AllowTranscriptDownload": {
+			"type": "boolean",
+			"displayName": "Allow Transcript Download",
+			"description": "Show a download button for the transcript file",
+			"localized": false,
+			"required": false,
+			"group": "Transcript",
+			"sortOrder": 40,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"PublishedDate": {
+			"type": "dateTime",
+			"displayName": "Published Date",
+			"description": "",
+			"localized": false,
+			"required": false,
+			"group": "VideoMetadata",
+			"sortOrder": 40,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"KeyTakeaways": {
+			"type": "array",
+			"displayName": "Key Takeaways",
+			"description": "Scannable bullet points summarizing the video",
+			"localized": true,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 50,
+			"allowedTypes": [],
+			"restrictedTypes": [],
+			"items": {
+				"type": "string",
+				"allowedTypes": [],
+				"restrictedTypes": []
+			}
+		},
+		"Faqs": {
+			"type": "array",
+			"displayName": "FAQs",
+			"description": "Frequently asked questions, built from Collapse components",
+			"localized": true,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 60,
+			"allowedTypes": [],
+			"restrictedTypes": [],
+			"items": {
+				"type": "content",
+				"allowedTypes": [
+					"Collapse"
+				],
+				"restrictedTypes": []
+			}
+		},
+		"MainContentArea": {
+			"type": "array",
+			"displayName": "Main Content Area",
+			"description": "Optional area for editors to add extra components below the main content",
+			"localized": true,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 70,
+			"allowedTypes": [],
+			"restrictedTypes": [],
+			"items": {
+				"type": "content",
+				"allowedTypes": [],
+				"restrictedTypes": []
+			}
+		},
+		"RelatedContent": {
+			"type": "array",
+			"displayName": "Related Content",
+			"description": "Related pages/videos to suggest next",
+			"localized": false,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 80,
+			"allowedTypes": [],
+			"restrictedTypes": [],
+			"items": {
+				"type": "contentReference",
+				"allowedTypes": [
+					"_page"
+				],
+				"restrictedTypes": []
+			}
+		},
+		"Schemas": {
+			"type": "array",
+			"displayName": "Schemas",
+			"description": "JSON-LD schema markup for SEO and AI visibility (e.g. VideoObject)",
+			"localized": false,
+			"required": false,
+			"group": "Information",
+			"sortOrder": 90,
+			"allowedTypes": [],
+			"restrictedTypes": [],
+			"items": {
+				"type": "string",
+				"allowedTypes": [],
+				"restrictedTypes": []
+			}
+		},
+		"SeoSettings": {
+			"type": "component",
+			"contentType": "PageSeoSettings",
+			"displayName": "SEO Settings",
+			"description": "",
+			"localized": false,
+			"required": false,
+			"group": "SeoSettings",
+			"sortOrder": 100,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		},
+		"PageAdminSettings": {
+			"type": "component",
+			"contentType": "PageAdminSettings",
+			"displayName": "Page Admin Settings",
+			"description": "",
+			"localized": false,
+			"required": false,
+			"group": "AdminSettings",
+			"sortOrder": 110,
+			"allowedTypes": [],
+			"restrictedTypes": []
+		}
+	}
+}

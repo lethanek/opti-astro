@@ -1,0 +1,78 @@
+---
+import { Image as AstroImage } from 'astro:assets';
+import type { VideoLandingPageExcerptFragment } from '../../../../__generated/sdk';
+import type { ContentPayload } from '../../../graphql/shared/ContentPayload';
+import LinkButton from '../../components/ButtonComponent/LinkButton.astro';
+import { isEditContext } from '../../shared/utils.ts';
+import { formatDuration, videoTypeLabel } from './videoLandingPageHelpers';
+
+const isCmsEdit = isEditContext(Astro.url);
+
+export interface Props {
+    key: string;
+    data: VideoLandingPageExcerptFragment;
+    contentPayload: ContentPayload;
+}
+const { key, data, contentPayload } = Astro.props as Props;
+
+const poster =
+    (data.PosterImage as any)?.item?.Url || data.PosterImage?.url?.default;
+const duration = formatDuration(data.DurationSeconds);
+---
+
+<div
+    class="card bg-base-100 w-80 flex-shrink-0 shadow-sm flex flex-col"
+    data-epi-block-id={(isCmsEdit && key) || undefined}
+>
+    <figure class="relative">
+        <AstroImage
+            class="aspect-video w-full object-cover"
+            src={poster ?? '/placeholder.png'}
+            alt={`Poster image for ${data.Heading}` || 'Video poster image'}
+            width={480}
+            height={270}
+        />
+        <span
+            class="bg-neutral text-neutral-content absolute inset-0 m-auto flex h-12 w-12 items-center justify-center rounded-full opacity-90"
+        >
+            <svg viewBox="0 0 24 24" class="ms-0.5 h-6 w-6" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+            </svg>
+        </span>
+        {
+            duration && (
+                <span class="badge badge-neutral absolute bottom-2 end-2">
+                    {duration}
+                </span>
+            )
+        }
+    </figure>
+    <div class="card-body">
+        {
+            data.VideoType && (
+                <span class="badge badge-outline badge-sm w-fit">
+                    {videoTypeLabel(data.VideoType)}
+                </span>
+            )
+        }
+        <h2 class="card-title">{data.Heading}</h2>
+        {data.SubHeading && <p class="text-base-content/70">{data.SubHeading}</p>}
+        {
+            data.Summary?.html && (
+                <div
+                    set:html={
+                        data.Summary.html.replace(/<[^>]*>/g, '').split(' ').slice(0, 24).join(' ') +
+                        '...'
+                    }
+                />
+            )
+        }
+        <div class="card-actions mt-auto justify-end">
+            <LinkButton
+                cssClasses="btn-primary"
+                link={data._metadata?.url?.hierarchical}
+                >Watch video</LinkButton
+            >
+        </div>
+    </div>
+</div>

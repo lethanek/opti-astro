@@ -38,6 +38,11 @@ query getAllPagesForSitemap(
                     Indexing
                 }
             }
+            ... on VideoLandingPage {
+                SeoSettings {
+                    Indexing
+                }
+            }
             ... on BlankExperience {
                 SeoSettings: BlankExperienceSeoSettings {
                     Indexing
